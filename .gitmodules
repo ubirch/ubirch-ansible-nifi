@@ -1,0 +1,9 @@
+[submodule "roles/nifi"]
+	path = roles/nifi
+	url = git@github.com:hanshuebner/ansible-role-nifi
+[submodule "roles/nifi_registry"]
+	path = roles/nifi_registry
+	url = git@github.com:hanshuebner/ansible-nifi-registry.git
+[submodule "roles/logstash"]
+	path = roles/logstash
+	url = git@github.com:hanshuebner/ansible-role-logstash.git
