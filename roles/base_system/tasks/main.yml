@@ -1,0 +1,82 @@
+---
+  - name: Add ssh agent line to sudoers
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: SSH_AUTH_SOCK
+      line: Defaults env_keep += "SSH_AUTH_SOCK"
+  - name: Update /etc/hosts
+    template:
+      src: templates/hosts.j2
+      dest: /etc/hosts
+      owner: root
+      group: root
+      mode: '0644'
+  - name: Set hostname
+    hostname:
+      name: "{{ inventory_hostname }}"
+  - name: Disable dynamic motd
+    replace:
+      path: /etc/pam.d/sshd
+      regexp: '^([^#].*pam_motd.*)'
+      replace: '#\1'
+  - name: Enable passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%sudo'
+      line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+  - name: Deploy apt packages
+    apt:
+      update_cache: yes
+      name:
+        - curl
+        - git
+        - gpg
+        - gpg-agent
+        - mtr
+        - python3-pip
+        - tmux
+        - traceroute
+        - zsh
+        - openjdk-8-jdk-headless
+        - iptables-persistent
+  - name: Add interactive users
+    user:
+      name:           "{{ item.name }}"
+      comment:        "{{ item.comment }}"
+      uid:            "{{ item.uid }}"
+      state:          present
+      groups:         "users,sudo,adm"
+      shell:          "/bin/zsh"
+    loop:
+      - { name:           'hans',
+          comment:        'Hans Hübner',
+          uid:            10000 }
+  - name: Deploy ssh keys
+    authorized_key:
+      user: "{{ item.user }}"
+      key:  "{{ item.key }}"
+    loop:
+      - { user: 'hans',
+          key:  'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCyj+gJ4UNcnGBqHa+JTIfkKLLLImk8AtFv0wArH1kBKKaFXjo3dU3cBzNTeENDZ9ihC+rvuuLeJ/zMQR5Idlzd7bJLPQk/JCTI93hljoYQGRl8OCknNLrq/FUAR56G0HEhprTNH/m01rUx16nWtGINiTWEfJGhbM0QIApDsHPuhnX+yge4WVnf3nkyNQJpSLHNElbTKDHmoW/931cBw7E/06swbUHBj4TPMY0ZK+IYsGfRHYtn9HMQSbDv6vdIOb4sTXxi1ALXFOjA1OnIArzxOutkNRZX3MGZdAXm1ZGBBoClopOAsuxCG5LYUKtrnlRPXaW+l072D1zpkOnmaWXD hans.huebner@gmail.com'}
+  - name: Check out Hans' dotfiles
+    git:
+      repo: git@github.com:hanshuebner/.dotfiles
+      version: master
+      dest: /home/hans/.dotfiles
+      accept_hostkey: yes
+  - name: Give Hans access to his .dotfiles
+    file:
+      path: /home/hans/.dotfiles
+      state: directory
+      owner: hans
+      group: hans
+      recurse: yes
+  - name: Install .dotfiles
+    command:
+      chdir: /home/hans/.dotfiles
+      cmd: ./install.zsh
+    become: yes
+    become_user: hans

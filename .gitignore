@@ -1,0 +1,5 @@
+inventory*.yml
+*.crt
+*.ks
+*.p12
+*.pem

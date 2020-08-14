@@ -1,0 +1,51 @@
+# This is a sample inventory for a single NiFi instance
+# (non-clustered).  It contains all the parameters needed to provision
+# NiFi and the NiFi registry.
+
+all:
+  hosts:
+    # Fully qualified domain name of the host.  The name must resolve
+    # to the IP address of the (virtual) machine and the user running
+    # Ansible must have access to the root account on the machine
+    # through SSH.  Agent forwarding needs to be enabled.
+    nifi-local.netzhansa.com:
+      # SSL Parameters:
+
+      # The NiFi web interface is protected buy the certificate and
+      # key in this keystore:
+      ssl_keystore: nifi-dev.ks
+      nifi_security_keystorePasswd: changeme
+      # The CA certificate that issued the server certificate needs to
+      # be included in this truststore:
+      ssl_truststore: ca-certificate.ks
+      nifi_security_truststorePasswd: changeme
+      # A client certificate issued by the same CA is required in
+      # order to programmatically set up NiFi through the API.  The
+      # .pem file needs to include both the certificate and the
+      # private key.  Encrypted private keys are not currently
+      # supported.
+      ssl_client_certificate: admin.pem
+
+      # Common name stored in the client certificate, used to define
+      # the initial administrator account in NiFi.
+      nifi_initial_admin: CN=admin
+
+      # Additional administrators to set up, as authenticated by the
+      # OpenID Connect identity provider configured below.
+      nifi_administrators:
+        - hans.huebner@gmail.com
+
+      # OpenID Connect:
+      nifi_security_user_oidc_discovery_url: https://accounts.google.com/.well-known/openid-configuration
+      nifi_security_user_oidc_client_id: XXXXXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.apps.googleusercontent.com
+      nifi_security_user_oidc_client_secret: XXXXXXXXXXXXXXXXXXXXXXXX
+
+      # NiFi registry backed by GitHub
+      nifi_registry_github_repository: git@github.com:XXXXXXXXXXX/nifi-flows
+      nifi_registry_github_user: XXXXXXXXXXX
+      nifi_registry_github_token: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+      # Elasticsearch setup
+      logstash_elasticsearch_hosts:
+        - https://nifi_dev:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX@XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.eu-west-1.aws.found.io:9243
+      logstash_elasticsearch_index: "nifi_dev-%{+YYYY.MM.dd}"

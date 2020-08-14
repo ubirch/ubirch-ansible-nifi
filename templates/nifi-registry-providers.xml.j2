@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<providers>
+  <flowPersistenceProvider>
+    <class>org.apache.nifi.registry.provider.flow.git.GitFlowPersistenceProvider</class>
+    <property name="Flow Storage Directory">/opt/nifi-registry/versioned_flows</property>
+    <property name="Remote To Push">origin</property>
+    <property name="Remote Access User">{{ nifi_registry_github_user }}</property>
+    <property name="Remote Access Password">{{ nifi_registry_github_token }}</property>
+  </flowPersistenceProvider>
+
+  <extensionBundlePersistenceProvider>
+    <class>org.apache.nifi.registry.provider.extension.FileSystemBundlePersistenceProvider</class>
+    <property name="Extension Bundle Storage Directory">/opt/nifi-registry/config_resources/extension_bundles</property>
+  </extensionBundlePersistenceProvider>
+</providers>

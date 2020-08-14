@@ -1,0 +1,94 @@
+---
+- name: NiFi host setup
+  hosts: all
+  remote_user: root
+  vars:
+    no_nifi_rollout: 
+  roles:
+    - role: base_system
+    - role: nifi
+      nifi_version: 1.11.4
+      nifi_node_jvm_memory: 6000m
+      nifi_is_secure: True
+      nifi_security_keystore: /opt/nifi/nifi-current/conf/keystore.ks
+      nifi_security_truststore: /opt/nifi/nifi-current/conf/truststore.ks
+    - role: nifi_registry
+    - role: logstash
+  pre_tasks:
+    - name: Ensure /opt/nifi directory
+      file:
+        path: /opt/nifi
+        state: directory
+    - name: Get NiFi distribution (tar.gz)
+      get_url:
+        url: https://downloads.apache.org/nifi/1.11.4/nifi-1.11.4-bin.tar.gz
+        checksum: sha256:5bb68014f818f74b475bcd774ce8c446fc20368ec3062c5ef86e4af9b2ba9aef
+        dest: /opt/nifi/nifi-1.11.4-bin.tar.gz
+      when: not no_nifi_rollout
+    - name: Unarchive NiFi distribution
+      unarchive:
+        src: /opt/nifi/nifi-1.11.4-bin.tar.gz
+        dest: /opt/nifi
+        copy: no
+      when: not no_nifi_rollout
+    - name: Ensure /opt/nifi-registry directory
+      file:
+        path: /opt/nifi-registry
+        state: directory
+    - name: Clone NiFi flow repository
+      git:
+        repo: "{{ nifi_registry_github_repository }}"
+        dest: /opt/nifi-registry/versioned_flows
+        ssh_opts: "-o StrictHostKeyChecking=no -v"
+      become_flags: -Ev
+  tasks:
+  - name: Disable swapping
+    sysctl:
+      name: vm.swappiness
+      value: '0'
+      state: present
+  - name: Increase the number of TCP socket ports available
+    sysctl:
+      name: net.ipv4.ip_local_port_range
+      value: '10001 65000'
+      state: present
+  - name: Forward https to NiFi on port 8443
+    iptables:
+      table: nat
+      chain: PREROUTING
+      in_interface: eth0
+      protocol: tcp
+      match: tcp
+      destination_port: https
+      jump: REDIRECT
+      to_ports: '8443'
+    become: yes
+  - name: Copy keystore
+    copy:
+      src: "{{ ssl_keystore }}"
+      dest: /opt/nifi/nifi-current/conf/keystore.ks
+      owner: nifi
+      group: nifi
+      mode: "0400"
+  - name: Copy truststore
+    copy:
+      src: "{{ ssl_truststore }}"
+      dest: /opt/nifi/nifi-current/conf/truststore.ks
+      owner: nifi
+      group: nifi
+      mode: "0400"
+  - name: Update NiFi registry providers file
+    template:
+      src: templates/nifi-registry-providers.xml.j2
+      dest: /opt/nifi-registry/releases/current/conf/providers.xml
+  - name: Change ownership of the flow file repository
+    file:
+      path: /opt/nifi-registry/versioned_flows
+      state: directory
+      owner: nifireg
+      group: nifireg
+      recurse: yes
+  - name: Set limits for NiFi
+    copy:
+      src: templates/90-nifi.conf
+      dest: /etc/security/limits.d/
