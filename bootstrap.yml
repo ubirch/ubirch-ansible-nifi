@@ -92,3 +92,38 @@
     copy:
       src: templates/90-nifi.conf
       dest: /etc/security/limits.d/
+  - name: Get ID of root process group
+    connection: local
+    uri:
+      url: https://{{ inventory_hostname }}/nifi-api/process-groups/root
+      client_cert: "{{ ssl_client_cert }}"
+      validate_certs: no
+    register: root_pg
+  - name: Create users.xml and authorizations.xml
+    connection: local
+    shell:
+      cmd: "./make-nifi-auth-files.py {{ root_pg.json.id }} '{{ nifi_initial_admin }}' {{ ','.join(nifi_administrators) }}"
+  - name: Copy users.xml
+    copy:
+      src: users.xml
+      dest: /opt/nifi/nifi-current/conf/users.xml
+      owner: nifi
+      group: nifi
+      mode: "0444"
+  - name: Copy authorizations.xml
+    copy:
+      src: authorizations.xml
+      dest: /opt/nifi/nifi-current/conf/authorizations.xml
+      owner: nifi
+      group: nifi
+      mode: "0444"
+  - name: Delete local users.xml
+    connection: local
+    file:
+      path: users.xml
+      state: absent
+  - name: Delete local authorizations.xml
+    connection: local
+    file:
+      path: authorizations.xml
+      state: absent

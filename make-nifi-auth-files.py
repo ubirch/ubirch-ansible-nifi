@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
-initial_administrator = 'CN=admin'
-additional_administrators = [ 'a@foo.de', 'b@bar.com' ]
-root_group_id = 'ROOT-GROUP-ID'
+import sys
+
+root_group_id = sys.argv[1]
+initial_administrator = sys.argv[2]
+additional_administrators = sys.argv[3].split(',')
 
 policies=[
     { 'resource': '/flow', 'action': 'R' },
@@ -41,7 +43,6 @@ admin_group_id = str(uuid4())
 ## Create users.xml
 
 tenants_element = Element('tenants')
-tenants_element.set('version', '1.0')
 
 groups = SubElement(tenants_element, 'groups')
 admin_group_element = SubElement(groups,
