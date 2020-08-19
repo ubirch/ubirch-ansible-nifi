@@ -121,7 +121,7 @@
   - name: Copy logback configuration for NiFi
     copy:
       src: files/logback.xml
-      dest: /opt/nifi/nifi-current/conf
+      dest: /opt/nifi/nifi-current/conf/
       mode: '0444'
   - name: Get ID of root process group
     connection: local
