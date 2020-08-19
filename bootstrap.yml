@@ -90,8 +90,39 @@
       recurse: yes
   - name: Set limits for NiFi
     copy:
-      src: templates/90-nifi.conf
+      src: files/90-nifi.conf
       dest: /etc/security/limits.d/
+  - name: Add logback to logstash dependencies to NiFi
+    maven_artifact:
+      group_id: "{{ item.group_id }}"
+      artifact_id: "{{ item.artifact_id }}"
+      version: "{{ item.version }}"
+      repository_url: "https://repo1.maven.org/maven2"
+      dest: /opt/nifi/nifi-current/lib/
+      mode: '0444'
+    loop:
+      - { group_id:    "net.logstash.logback",
+          artifact_id: "logstash-logback-encoder",
+          version:     "6.4" }
+      - { group_id:    "com.fasterxml.jackson.core",
+          artifact_id: "jackson-core",
+          version:     "2.11.0" }
+      - { group_id:    "com.fasterxml.jackson.core",
+          artifact_id: "jackson-databind",
+          version:     "2.11.0" }
+      - { group_id:    "com.fasterxml.jackson.core",
+          artifact_id: "jackson-annotations",
+          version:     "2.11.0" }
+  - name: Copy logback to logstash input configuration
+    copy:
+      src: files/03-logback-input.conf
+      dest: /etc/logstash/conf.d/
+      mode: '0444'
+  - name: Copy logback configuration for NiFi
+    copy:
+      src: files/logback.xml
+      dest: /opt/nifi/nifi-current/conf
+      mode: '0444'
   - name: Get ID of root process group
     connection: local
     uri:
@@ -106,14 +137,14 @@
   - name: Copy users.xml
     copy:
       src: users.xml
-      dest: /opt/nifi/nifi-current/conf/users.xml
+      dest: /opt/nifi/nifi-current/conf/
       owner: nifi
       group: nifi
       mode: "0444"
   - name: Copy authorizations.xml
     copy:
       src: authorizations.xml
-      dest: /opt/nifi/nifi-current/conf/authorizations.xml
+      dest: /opt/nifi/nifi-current/conf/
       owner: nifi
       group: nifi
       mode: "0444"
