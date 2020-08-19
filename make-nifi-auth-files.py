@@ -62,7 +62,6 @@ with open('users.xml', 'w', encoding='utf-8') as outfile:
 ## Create authorizations.xml
 
 authorizations_element = Element('authorizations')
-authorizations_element.set('version', '1.0')
 
 policies_element = SubElement(authorizations_element, 'policies')
 for policy in policies:
