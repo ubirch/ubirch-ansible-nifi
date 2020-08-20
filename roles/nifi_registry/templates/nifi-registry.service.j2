@@ -1,0 +1,13 @@
+[Unit]
+Description=Apache NiFi Registry as service
+After=network.target
+
+[Service]
+Type=forking
+User={{ nifi_registry_user }}
+Group={{ nifi_registry_group }}
+ExecStart={{ nifi_registry_config_dirs.home }}/bin/nifi-registry.sh start
+ExecStop={{ nifi_registry_config_dirs.home }}/bin/nifi-registry.sh stop
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,29 @@
+---
+- name: Install lxml python module
+  apt:
+    name: python3-lxml
+    state: present
+
+- name: Create NiFi Registry group
+  group:
+    name: "{{ nifi_registry_group }}"
+    state: "present"
+    system: "yes"
+
+- name: Create NiFi Registry user
+  user:
+    name: "{{ nifi_registry_user }}"
+    groups: "{{ nifi_registry_group }}"
+    append: "yes"
+    state: "present"
+    create_home: "no"
+    system: "yes"
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: "directory"
+    owner: "{{ nifi_registry_user }}"
+    group: "{{ nifi_registry_group }}"
+  with_items:
+    - "{{ nifi_registry_config_dirs.install }}"
