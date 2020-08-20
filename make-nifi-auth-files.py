@@ -2,9 +2,12 @@
 
 import sys
 
-root_group_id = sys.argv[1]
-initial_administrator = sys.argv[2]
-additional_administrators = sys.argv[3].split(',')
+from uuid import uuid4
+from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.dom import minidom
+
+initial_administrator = sys.argv[1]
+additional_administrators = sys.argv[2].split(',')
 
 policies=[
     { 'resource': '/flow', 'action': 'R' },
@@ -24,10 +27,6 @@ root_group_policies=[
     { 'resource': '/operation/process-groups/', 'action': 'W' },
     { 'resource': '/provenance-data/process-groups/', 'action': 'R' }]
 
-from uuid import uuid4
-from xml.etree.ElementTree import Element, SubElement, tostring
-from xml.dom import minidom
-
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
     """
@@ -39,6 +38,25 @@ administrators = list(map(lambda identity: { 'identity': identity, 'identifier':
                           [ initial_administrator ] + additional_administrators))
 
 admin_group_id = str(uuid4())
+root_group_id = str(uuid4())
+
+## Create flow.xml
+
+flowControllerElement = Element('flowController', { 'encoding-version': '1.4' });
+SubElement(flowControllerElement, 'maxTimerDrivenThreadCount').text = '10'
+SubElement(flowControllerElement, 'maxEventDrivenThreadCount').text = '1'
+SubElement(flowControllerElement, 'registries')
+SubElement(flowControllerElement, 'parameterContexts')
+rootGroupElement = SubElement(flowControllerElement, 'rootGroup')
+SubElement(rootGroupElement, 'id').text = root_group_id
+SubElement(rootGroupElement, 'name').text = 'NiFi Flow'
+SubElement(rootGroupElement, 'position', { 'x': '0.0', 'y': '0.0' })
+SubElement(rootGroupElement, 'comment')
+SubElement(flowControllerElement, 'controllerServices')
+SubElement(flowControllerElement, 'reportingTasks')
+
+with open('flow.xml', 'w', encoding='utf-8') as outfile:
+    outfile.write(prettify(flowControllerElement))
 
 ## Create users.xml
 

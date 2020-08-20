@@ -3,7 +3,7 @@
   hosts: all
   remote_user: root
   vars:
-    no_nifi_rollout: 
+    no_nifi_rollout:
   roles:
     - role: base_system
     - role: nifi
@@ -123,17 +123,21 @@
       src: files/logback.xml
       dest: /opt/nifi/nifi-current/conf/
       mode: '0444'
-  - name: Get ID of root process group
-    connection: local
-    uri:
-      url: https://{{ inventory_hostname }}/nifi-api/process-groups/root
-      client_cert: "{{ ssl_client_cert }}"
-      validate_certs: no
-    register: root_pg
-  - name: Create users.xml and authorizations.xml
+  - name: Create flow.xml, users.xml and authorizations.xml
     connection: local
     shell:
-      cmd: "./make-nifi-auth-files.py {{ root_pg.json.id }} '{{ nifi_initial_admin }}' {{ ','.join(nifi_administrators) }}"
+      cmd: "./make-nifi-auth-files.py '{{ nifi_initial_admin }}' {{ ','.join(nifi_administrators) }}"
+  - name: Copy flow.xml
+    copy:
+      src: flow.xml
+      dest: /opt/nifi/nifi-current/conf/
+  - name: Compress flow.xml
+    archive:
+      path: /opt/nifi/nifi-current/conf/flow.xml
+      remove: yes
+      owner: nifi
+      group: nifi
+      mode: 0644
   - name: Copy users.xml
     copy:
       src: users.xml
@@ -148,13 +152,12 @@
       owner: nifi
       group: nifi
       mode: "0444"
-  - name: Delete local users.xml
+  - name: Delete local files
     connection: local
     file:
-      path: users.xml
+      path: "{{ item }}"
       state: absent
-  - name: Delete local authorizations.xml
-    connection: local
-    file:
-      path: authorizations.xml
-      state: absent
+    loop:
+      - users.xml
+      - authorizations.xml
+      - flow.xml
