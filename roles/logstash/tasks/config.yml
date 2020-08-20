@@ -8,7 +8,6 @@
     mode: 0644
   with_items:
     - 01-beats-input.conf
-    - 30-elasticsearch-output.conf
   notify: restart logstash
 
 - name: Create Logstash filters.
@@ -36,9 +35,30 @@
   when: logstash_monitor_local_syslog
   notify: restart logstash
 
+- name: Create Logstash configuration file for elasticsearch.
+  template:
+    src: 30-elasticsearch-output.conf.j2
+    dest: /etc/logstash/conf.d/30-elasticsearch-output.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: logstash_elasticsearch_hosts|length > 0
+  notify: restart logstash
+
+- name: Create Logstash configuration file for datadog.
+  template:
+    src: 30-datadog-output.conf.j2
+    dest: /etc/logstash/conf.d/30-datadog-output.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: logstash_datadog_log_api_key is defined
+  notify: restart logstash
+
 - name: Ensure configuration for local syslog is absent if disabled.
   file:
     path: /etc/logstash/conf.d/02-local-syslog-input.conf
     state: absent
   when: not logstash_monitor_local_syslog
   notify: restart logstash
+

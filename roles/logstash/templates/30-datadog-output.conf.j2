@@ -1,0 +1,6 @@
+output {
+    datadog_logs {
+        api_key => "{{ logstash_datadog_log_api_key }}"
+        host => "{{ logstash_datadog_log_host }}"
+    }
+}
