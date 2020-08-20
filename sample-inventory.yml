@@ -11,7 +11,7 @@ all:
     nifi-local.netzhansa.com:
       # SSL Parameters:
 
-      # The NiFi web interface is protected buy the certificate and
+      # The NiFi web interface is protected by the certificate and
       # key in this keystore:
       ssl_keystore: nifi-dev.ks
       nifi_security_keystorePasswd: changeme
