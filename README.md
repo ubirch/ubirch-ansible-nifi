@@ -14,9 +14,8 @@ the environment being set up.  The steps are:
 
  1. Set up a (virtual) machine
  2. Register the IPv4 address in the DNS
- 3. Create a TLS certificate
- 4. Configure environment
- 5. Deploy NiFi and its dependencies
+ 3. Configure environment
+ 4. Deploy NiFi and its dependencies
  
 The results of the preparatory steps are all stored in a YAML
 inventory file that is then used by Ansible to run the main playbook.
@@ -65,12 +64,32 @@ needs to be installed locally and configured with an appropriate
 access token.  The AWS CLI is available in most operating system
 package repositories.
 
-## Create a TLS certificate
-
 ## Configure environment
 
 Additional configuration parameters can be set in the inventory for
 the new virtual machine:
+
+### SSL parameters
+
+By default, the NiFi instance will be configured so that a server TLS
+certificate is requested from [letsencrypt](https://letsencrypt.org/)
+using [certbot](https://certbot.eff.org/).  If desired, it is possible
+to use a keystore and/or a truststore from another source.  This can
+be configured by the following parameters in the inventory:
+
+      # The NiFi web interface is protected by the certificate and
+      # key in this keystore:
+      ssl_keystore: nifi-dev.ks
+      nifi_security_keystorePasswd: changeme
+      # The CA certificate that issued the server certificate needs to
+      # be included in this truststore:
+      ssl_truststore: ca-certificate.ks
+      nifi_security_truststorePasswd: changeme
+
+If a CA certificate is present in the truststore, NiFi will
+authenticate clients that present a valid client certificate issued by
+that CA.  Access rights need to be configured for such users manually
+or by editing users.xml and authorizations.xml.
 
 ### Logging
 
@@ -116,6 +135,10 @@ to install and configure NiFi and its dependencies on the virtual
 machine.
 
 # Miscelleneous notes
+
+## How to use Google to authenticate Apache NiFi users
+
+    https://bryanbende.com/development/2017/10/03/apache-nifi-openid-connect
 
 ## Using nifi-toolkit to create SSL certificates
 

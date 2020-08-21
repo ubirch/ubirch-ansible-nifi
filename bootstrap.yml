@@ -63,6 +63,29 @@
       jump: REDIRECT
       to_ports: '8443'
     become: yes
+
+  - name: Create LetsEncrypt certificate
+    command: certbot certonly --standalone --noninteractive --agree-tos -d "{{ inventory_hostname }}" --email "{{ nifi_administrators[0] }}"
+    when: ssl_keystore is not defined
+  - name: Copy keystore refresh script
+    copy:
+      src: files/maybe-remake-keystore.sh
+      dest: /usr/local/sbin/
+      owner: root
+      group: root
+      mode: "0744"
+    when: ssl_keystore is not defined
+  - name: Add crontab entry to remake keystore
+    cron:
+      name: "Maybe recreate NiFi keystore"
+      job: "/usr/local/sbin/maybe-remake-keystore.sh"
+      user: root
+      minute: "0"
+      hour: "2"
+    when: ssl_keystore is not defined
+  - name: Make sure that keystore exists
+    command: "/usr/local/sbin/maybe-remake-keystore.sh"
+
   - name: Copy keystore
     copy:
       src: "{{ ssl_keystore }}"
@@ -70,6 +93,7 @@
       owner: nifi
       group: nifi
       mode: "0400"
+    when: ssl_keystore is defined
   - name: Copy truststore
     copy:
       src: "{{ ssl_truststore }}"
@@ -77,6 +101,8 @@
       owner: nifi
       group: nifi
       mode: "0400"
+    when: ssl_truststore is defined
+
   - name: Update NiFi registry providers file
     template:
       src: templates/nifi-registry-providers.xml.j2
@@ -88,10 +114,12 @@
       owner: nifireg
       group: nifireg
       recurse: yes
+
   - name: Set limits for NiFi
     copy:
       src: files/90-nifi.conf
       dest: /etc/security/limits.d/
+
   - name: Add logback to logstash dependencies to NiFi
     maven_artifact:
       group_id: "{{ item.group_id }}"
@@ -123,41 +151,11 @@
       src: files/logback.xml
       dest: /opt/nifi/nifi-current/conf/
       mode: '0444'
-  - name: Create flow.xml, users.xml and authorizations.xml
-    connection: local
-    shell:
-      cmd: "./make-nifi-auth-files.py '{{ nifi_initial_admin }}' {{ ','.join(nifi_administrators) }}"
-  - name: Copy flow.xml
-    copy:
-      src: flow.xml
-      dest: /opt/nifi/nifi-current/conf/
-  - name: Compress flow.xml
-    archive:
-      path: /opt/nifi/nifi-current/conf/flow.xml
-      remove: yes
-      owner: nifi
-      group: nifi
-      mode: 0644
-  - name: Copy users.xml
-    copy:
-      src: users.xml
-      dest: /opt/nifi/nifi-current/conf/
-      owner: nifi
-      group: nifi
-      mode: "0444"
-  - name: Copy authorizations.xml
-    copy:
-      src: authorizations.xml
-      dest: /opt/nifi/nifi-current/conf/
-      owner: nifi
-      group: nifi
-      mode: "0444"
-  - name: Delete local files
-    connection: local
-    file:
-      path: "{{ item }}"
-      state: absent
-    loop:
-      - users.xml
-      - authorizations.xml
-      - flow.xml
+
+  - name: Check flow.xml.gz for existence
+    stat:
+      path: /opt/nifi/nifi-current/conf/flow.xml.gz
+    register: flow
+  - name: Initialize NiFi users, authentications and flow
+    include_tasks: tasks/init-nifi-auth.yml
+    when: not flow.stat.exists

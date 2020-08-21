@@ -1,0 +1,38 @@
+  - name: Create flow.xml, users.xml and authorizations.xml
+    connection: local
+    shell:
+      cmd: "./make-nifi-auth-files.py '{{ nifi_initial_admin }}' {{ ','.join(nifi_administrators) }}"
+  - name: Copy flow.xml
+    copy:
+      src: flow.xml
+      dest: /opt/nifi/nifi-current/conf/
+  - name: Compress flow.xml
+    archive:
+      path: /opt/nifi/nifi-current/conf/flow.xml
+      remove: yes
+      owner: nifi
+      group: nifi
+      mode: 0644
+  - name: Copy users.xml
+    copy:
+      src: users.xml
+      dest: /opt/nifi/nifi-current/conf/
+      owner: nifi
+      group: nifi
+      mode: "0444"
+  - name: Copy authorizations.xml
+    copy:
+      src: authorizations.xml
+      dest: /opt/nifi/nifi-current/conf/
+      owner: nifi
+      group: nifi
+      mode: "0444"
+  - name: Delete local files
+    connection: local
+    file:
+      path: "{{ item }}"
+      state: absent
+    loop:
+      - users.xml
+      - authorizations.xml
+      - flow.xml
