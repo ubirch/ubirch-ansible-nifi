@@ -5,10 +5,10 @@
   - name: Copy flow.xml
     copy:
       src: flow.xml
-      dest: /opt/nifi/nifi-current/conf/
+      dest: /etc/nifi/
   - name: Compress flow.xml
     archive:
-      path: /opt/nifi/nifi-current/conf/flow.xml
+      path: /etc/nifi/flow.xml
       remove: yes
       owner: nifi
       group: nifi
@@ -19,14 +19,14 @@
       dest: /opt/nifi/nifi-current/conf/
       owner: nifi
       group: nifi
-      mode: "0444"
+      mode: "0644"
   - name: Copy authorizations.xml
     copy:
       src: authorizations.xml
       dest: /opt/nifi/nifi-current/conf/
       owner: nifi
       group: nifi
-      mode: "0444"
+      mode: "0644"
   - name: Delete local files
     connection: local
     file:

@@ -53,6 +53,8 @@
       jump: REDIRECT
       to_ports: '8443'
     become: yes
+  - name: Persist iptables
+    command: service netfilter-persistent save
 
   - name: Create LetsEncrypt certificate
     command: certbot certonly --standalone --noninteractive --agree-tos -d "{{ inventory_hostname }}" --email "{{ nifi_administrators[0] }}"
@@ -75,6 +77,7 @@
     when: ssl_keystore is not defined
   - name: Make sure that keystore exists
     command: "/usr/local/sbin/maybe-remake-keystore.sh"
+    when: ssl_keystore is not defined
 
   - name: Copy keystore
     copy:
@@ -154,7 +157,7 @@
 
   - name: Check flow.xml.gz for existence
     stat:
-      path: /opt/nifi/nifi-current/conf/flow.xml.gz
+      path: /etc/nifi/flow.xml.gz
     register: flow
   - name: Initialize NiFi users, authentications and flow
     include_tasks: tasks/init-nifi-auth.yml
