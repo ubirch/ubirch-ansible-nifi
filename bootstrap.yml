@@ -21,7 +21,7 @@
         state: directory
     - name: Get NiFi distribution (tar.gz)
       get_url:
-        url: https://downloads.apache.org/nifi/1.11.4/nifi-1.11.4-bin.tar.gz
+        url: https://archive.apache.org/dist/nifi/1.11.4/nifi-1.11.4-bin.tar.gz
         checksum: sha256:5bb68014f818f74b475bcd774ce8c446fc20368ec3062c5ef86e4af9b2ba9aef
         dest: /opt/nifi/nifi-1.11.4-bin.tar.gz
       when: not no_nifi_rollout
@@ -31,16 +31,6 @@
         dest: /opt/nifi
         copy: no
       when: not no_nifi_rollout
-    - name: Ensure /opt/nifi-registry directory
-      file:
-        path: /opt/nifi-registry
-        state: directory
-    - name: Clone NiFi flow repository
-      git:
-        repo: "{{ nifi_registry_github_repository }}"
-        dest: /opt/nifi-registry/versioned_flows
-        ssh_opts: "-o StrictHostKeyChecking=no -v"
-      become_flags: -Ev
   tasks:
   - name: Disable swapping
     sysctl:
@@ -103,6 +93,16 @@
       mode: "0400"
     when: ssl_truststore is defined
 
+  - name: Ensure /opt/nifi-registry directory
+    file:
+      path: /opt/nifi-registry
+      state: directory
+  - name: Clone NiFi flow repository
+    git:
+      repo: "{{ nifi_registry_github_repository }}"
+      dest: /opt/nifi-registry/versioned_flows
+      ssh_opts: "-o StrictHostKeyChecking=no -v"
+    become_flags: -Ev
   - name: Update NiFi registry providers file
     template:
       src: templates/nifi-registry-providers.xml.j2
