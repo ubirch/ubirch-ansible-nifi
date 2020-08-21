@@ -9,7 +9,7 @@ CERTS_DIR=/etc/letsencrypt/live/$HOSTNAME
 KEYSTORE=/opt/nifi/nifi-current/conf/keystore.ks
 TMP_PKCS12=/tmp/$HOSTNAME.p12
 
-if [ $CERTS_DIR/cert.pem -nt $KEYSTORE ]
+if [ ! -f $KEYSTORE -o $CERTS_DIR/cert.pem -nt $KEYSTORE ]
 then
     if systemctl is-active nifi
     then
@@ -36,7 +36,7 @@ then
 	    -srcstorepass "$PASSWORD" \
 	    -destkeystore $KEYSTORE \
 	    -alias $HOSTNAME
-    if [ "$NIFI_ACTIVE" ne "" ]
+    if [ "$NIFI_ACTIVE" -ne "" ]
     then
         systemctl start nifi
     fi
