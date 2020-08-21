@@ -19,12 +19,6 @@ all:
       # be included in this truststore:
       ssl_truststore: ca-certificate.ks
       nifi_security_truststorePasswd: changeme
-      # A client certificate issued by the same CA is required in
-      # order to programmatically set up NiFi through the API.  The
-      # .pem file needs to include both the certificate and the
-      # private key.  Encrypted private keys are not currently
-      # supported.
-      ssl_client_certificate: admin.pem
 
       # Common name stored in the client certificate, used to define
       # the initial administrator account in NiFi.
