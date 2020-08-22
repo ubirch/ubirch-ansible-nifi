@@ -4,6 +4,7 @@
   remote_user: root
   vars:
     no_nifi_rollout:
+    certbot_args:
   roles:
     - role: base_system
     - role: nifi
