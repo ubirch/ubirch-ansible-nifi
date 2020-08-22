@@ -57,7 +57,7 @@
     command: service netfilter-persistent save
 
   - name: Create LetsEncrypt certificate
-    command: certbot certonly --standalone --noninteractive --agree-tos -d "{{ inventory_hostname }}" --email "{{ nifi_administrators[0] }}"
+    command: certbot certonly --standalone "{{ certbot_args }}" --noninteractive --agree-tos -d "{{ inventory_hostname }}" --email "{{ nifi_administrators[0] }}"
     when: ssl_keystore is not defined
   - name: Copy keystore refresh script
     copy:
@@ -94,18 +94,33 @@
       owner: nifi
       group: nifi
       mode: "0400"
-    when: ssl_truststore is defined
 
   - name: Ensure /opt/nifi-registry directory
     file:
       path: /opt/nifi-registry
       state: directory
+  - name: Create ~nifireg/.ssh
+    file:
+      path: /home/nifireg/.ssh
+      owner: nifireg
+      group: nifireg
+      mode: "0700"
+      state: directory
+  - name: Copy NiFi registry deploy key
+    copy:
+      src: "{{ nifi_registry_github_deploy_key }}"
+      dest: /home/nifireg/.ssh/id_rsa
+      owner: nifireg
+      group: nifireg
+      mode: "0400"
   - name: Clone NiFi flow repository
     git:
       repo: "{{ nifi_registry_github_repository }}"
       dest: /opt/nifi-registry/versioned_flows
-      ssh_opts: "-o StrictHostKeyChecking=no -v"
-    become_flags: -Ev
+      accept_hostkey: yes
+      key_file: /home/nifireg/.ssh/id_rsa
+    become: yes
+    become_user: nifireg
   - name: Update NiFi registry providers file
     template:
       src: templates/nifi-registry-providers.xml.j2

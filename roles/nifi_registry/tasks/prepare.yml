@@ -16,7 +16,6 @@
     groups: "{{ nifi_registry_group }}"
     append: "yes"
     state: "present"
-    create_home: "no"
     system: "yes"
 
 - name: Create directories
