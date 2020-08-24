@@ -4,7 +4,7 @@
   remote_user: root
   vars:
     no_nifi_rollout:
-    certbot_args:
+    certbot_server: https://acme-v02.api.letsencrypt.org/directory
   roles:
     - role: base_system
     - role: nifi
@@ -58,7 +58,7 @@
     command: service netfilter-persistent save
 
   - name: Create LetsEncrypt certificate
-    command: certbot certonly --standalone "{{ certbot_args }}" --noninteractive --agree-tos -d "{{ inventory_hostname }}" --email "{{ nifi_administrators[0] }}"
+    command: certbot certonly --standalone --server "{{ certbot_server }}" --noninteractive --agree-tos -d "{{ inventory_hostname }}" --email "{{ nifi_administrators[0] }}"
     when: ssl_keystore is not defined
   - name: Copy keystore refresh script
     copy:
