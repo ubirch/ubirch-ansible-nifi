@@ -134,6 +134,14 @@ With all parameters present in the Inventory file, Ansible can be run
 to install and configure NiFi and its dependencies on the virtual
 machine.
 
+# Installing extensions
+
+The NiFi installation lives under `/opt/nifi/nifi-current/`.  To
+install extensions (.nar files), they must be placed in the
+`/opt/nifi/nifi-current/extensions` directory.  This can be done
+manually or automatically.  NiFi automatically reloads extensions when
+they change.
+
 # Miscelleneous notes
 
 ## How to use Google to authenticate Apache NiFi users
