@@ -66,6 +66,18 @@ package repositories.
 
 ## Configure environment
 
+In order to create an environment, the NiFi host needs to be defined
+in an inventory file.  A sample inventory is provided in the file
+`sample-inventory.yml`.  Once the inventory has been set up, the
+playbook can be run like so:
+
+    ansible-playbook -i <inventory-file> bootstrap.yml
+
+File names defined in the inventory file are resolved by
+`ansible-playbook` relative to to the playbook file
+(`bootstrap.yml`).  It might thus be necessary to navigate out of the
+playbook repository by using `..` or using absolute pathnames.
+
 Additional configuration parameters can be set in the inventory for
 the new virtual machine:
 
@@ -133,6 +145,19 @@ appropriate host name in the inventory.
 With all parameters present in the Inventory file, Ansible can be run
 to install and configure NiFi and its dependencies on the virtual
 machine.
+
+## Storing NiFi flows in GitHub
+
+The ansible playbook automatically sets up the NiFi registry so that
+flow configurations are stored in a git repository and pushed to
+github.  The URL of the github repostitory must be stored in the
+`nifi_registry_github_repository` configuration variable.  As flows
+can be edited in the NiFi web UI, the NiFi registry must be able to
+push changes back into GitHub.  In order to achieve that, a SSH key
+needs to be created and set up as a deployment key with write access
+in the GitHub flow configuration GitHub repository.  The private key
+must be stored in a file, and the name of that file needs to be
+configured as `nifi_registry_github_deploy_key` in the inventory.
 
 # Installing extensions
 
