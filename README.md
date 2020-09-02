@@ -161,11 +161,10 @@ configured as `nifi_registry_github_deploy_key` in the inventory.
 
 # Installing extensions
 
-The NiFi installation lives under `/opt/nifi/nifi-current/`.  To
-install extensions (.nar files), they must be placed in the
-`/opt/nifi/nifi-current/extensions` directory.  This can be done
-manually or automatically.  NiFi automatically reloads extensions when
-they change.
+The NiFi installation lives under `/opt/nifi/`.  To install extensions
+(.nar files), they must be placed in the `/opt/nifi/extensions`
+directory.  This can be done manually or automatically.  NiFi
+automatically reloads extensions when they change.
 
 # Miscelleneous notes
 

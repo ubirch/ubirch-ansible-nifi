@@ -13,8 +13,8 @@
       nifi_version: 1.11.4
       nifi_node_jvm_memory: 6000m
       nifi_is_secure: True
-      nifi_security_keystore: /opt/nifi/nifi-current/conf/keystore.ks
-      nifi_security_truststore: /opt/nifi/nifi-current/conf/truststore.ks
+      nifi_security_keystore: /opt/nifi/conf/keystore.ks
+      nifi_security_truststore: /opt/nifi/conf/truststore.ks
     - role: nifi_registry
     - role: logstash
   tasks:
@@ -68,7 +68,7 @@
   - name: Copy keystore
     copy:
       src: "{{ ssl_keystore }}"
-      dest: /opt/nifi/nifi-current/conf/keystore.ks
+      dest: /opt/nifi/conf/keystore.ks
       owner: nifi
       group: nifi
       mode: "0400"
@@ -76,7 +76,7 @@
   - name: Copy truststore
     copy:
       src: "{{ ssl_truststore }}"
-      dest: /opt/nifi/nifi-current/conf/truststore.ks
+      dest: /opt/nifi/conf/truststore.ks
       owner: nifi
       group: nifi
       mode: "0400"
@@ -130,7 +130,7 @@
       artifact_id: "{{ item.artifact_id }}"
       version: "{{ item.version }}"
       repository_url: "https://repo1.maven.org/maven2"
-      dest: /opt/nifi/nifi-current/lib/
+      dest: /opt/nifi/lib/
       mode: '0444'
     loop:
       - { group_id:    "net.logstash.logback",
@@ -153,7 +153,7 @@
   - name: Copy logback configuration for NiFi
     copy:
       src: files/logback.xml
-      dest: /opt/nifi/nifi-current/conf/
+      dest: /opt/nifi/conf/
       mode: '0444'
 
   - name: Check flow.xml.gz for existence

@@ -16,14 +16,14 @@
   - name: Copy users.xml
     copy:
       src: users.xml
-      dest: /opt/nifi/nifi-current/conf/
+      dest: /opt/nifi/conf/
       owner: nifi
       group: nifi
       mode: "0644"
   - name: Copy authorizations.xml
     copy:
       src: authorizations.xml
-      dest: /opt/nifi/nifi-current/conf/
+      dest: /opt/nifi/conf/
       owner: nifi
       group: nifi
       mode: "0644"

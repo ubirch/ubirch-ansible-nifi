@@ -3,10 +3,10 @@
 set -e
 
 HOSTNAME=$(hostname)
-PASSWORD=$(perl -ne 'print "$1\n" if (/^nifi.security.keystorePasswd=(.*)/)' /opt/nifi/nifi-current/conf/nifi.properties)
+PASSWORD=$(perl -ne 'print "$1\n" if (/^nifi.security.keystorePasswd=(.*)/)' /opt/nifi/conf/nifi.properties)
 CERTS_DIR=/etc/letsencrypt/live/$HOSTNAME
 
-KEYSTORE=/opt/nifi/nifi-current/conf/keystore.ks
+KEYSTORE=/opt/nifi/conf/keystore.ks
 TMP_PKCS12=/tmp/$HOSTNAME.p12
 
 if [ ! -f $KEYSTORE -o $CERTS_DIR/cert.pem -nt $KEYSTORE ]
