@@ -1,7 +1,7 @@
 ---
 # defaults file for nifi
-nifi_version: 1.11.4
-nifi_dist_checksum: sha256:5bb68014f818f74b475bcd774ce8c446fc20368ec3062c5ef86e4af9b2ba9aef
+nifi_version: 1.12.0
+nifi_dist_checksum: sha256:e2ddbc1b57d88e1e154c40d2c533b42ff37275bed1d71a392eb2fa111511651b
 
 # installation locations
 nifi_base_dir: /opt

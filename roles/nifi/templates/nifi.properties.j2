@@ -77,10 +77,6 @@ nifi.flowfile.repository.encryption.key=
 
 nifi.swap.manager.implementation=org.apache.nifi.controller.FileSystemSwapManager
 nifi.queue.swap.threshold={{ nifi_queue_swap_threshold }}
-nifi.swap.in.period=5 sec
-nifi.swap.in.threads={{ nifi_swap_in_threads }}
-nifi.swap.out.period=5 sec
-nifi.swap.out.threads={{ nifi_swap_out_threads }}
 
 # Content Repository
 nifi.content.repository.implementation=org.apache.nifi.controller.repository.FileSystemRepository
@@ -171,6 +167,9 @@ nifi.web.jetty.threads=200
 nifi.web.max.header.size={{ nifi_web_max_header_size }}
 nifi.web.proxy.context.path={{ nifi_web_proxy_context_path }}
 nifi.web.proxy.host={{ nifi_web_proxy_host }}
+nifi.web.max.content.size=
+nifi.web.max.requests.per.second=30000
+nifi.web.should.send.server.version=true
 
 # security properties #
 nifi.sensitive.props.key=

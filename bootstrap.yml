@@ -10,7 +10,6 @@
   roles:
     - role: base_system
     - role: nifi
-      nifi_version: 1.11.4
       nifi_node_jvm_memory: 6000m
       nifi_is_secure: True
       nifi_security_keystore: /opt/nifi/conf/keystore.ks
