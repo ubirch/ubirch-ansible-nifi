@@ -5,6 +5,8 @@
   vars:
     no_nifi_rollout:
     certbot_server: https://acme-v02.api.letsencrypt.org/directory
+    ssl_truststore: files/empty-truststore.ks
+    nifi_security_truststorePasswd: changeit
   roles:
     - role: base_system
     - role: nifi
@@ -15,23 +17,6 @@
       nifi_security_truststore: /opt/nifi/nifi-current/conf/truststore.ks
     - role: nifi_registry
     - role: logstash
-  pre_tasks:
-    - name: Ensure /opt/nifi directory
-      file:
-        path: /opt/nifi
-        state: directory
-    - name: Get NiFi distribution (tar.gz)
-      get_url:
-        url: https://archive.apache.org/dist/nifi/1.11.4/nifi-1.11.4-bin.tar.gz
-        checksum: sha256:5bb68014f818f74b475bcd774ce8c446fc20368ec3062c5ef86e4af9b2ba9aef
-        dest: /opt/nifi/nifi-1.11.4-bin.tar.gz
-      when: not no_nifi_rollout
-    - name: Unarchive NiFi distribution
-      unarchive:
-        src: /opt/nifi/nifi-1.11.4-bin.tar.gz
-        dest: /opt/nifi
-        copy: no
-      when: not no_nifi_rollout
   tasks:
   - name: Disable swapping
     sysctl:

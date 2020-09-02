@@ -11,14 +11,8 @@ all:
     nifi-local.netzhansa.com:
       # SSL Parameters:
 
-      # The NiFi web interface is protected by the certificate and
-      # key in this keystore:
-      ssl_keystore: nifi-dev.ks
-      nifi_security_keystorePasswd: changeme
-      # The CA certificate that issued the server certificate needs to
-      # be included in this truststore:
-      ssl_truststore: ca-certificate.ks
-      nifi_security_truststorePasswd: changeme
+      # password to use for the keystore that holds the letsencrypt certificate
+      nifi_security_keystorePasswd: changeit
 
       # Common name stored in the client certificate, used to define
       # the initial administrator account in NiFi.

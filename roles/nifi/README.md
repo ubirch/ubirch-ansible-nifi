@@ -2,15 +2,6 @@ nifi
 ====
 
 Use this role to configure Apache NiFi.
-Role has been tested with NiFi versions 1.3.x, 1.4.x, 1.5.x, 1.6.x, 1.7.x, and 1.8.x.
-
-Requirements
-------------
-
-Prior to executing this role, the NiFi distribution must be accssible on the target system at
-```{{ nifi_base_dir }}/nifi-{{ nifi_version }}/```
-  - if RPM, the RPM must be installed
-  - if tar.gz, it must be unarchived
 
 Role Variables
 --------------
@@ -20,7 +11,7 @@ Role Variables
 
 ### Variables that determine the nifi install location, and their default values:
 
-    nifi_base_dir: /opt/nifi
+    nifi_base_dir: /opt
     nifi_etc_dir: /etc/nifi
     nifi_log_dir: /var/log/nifi
     nifi_pid_dir: /var/run/nifi

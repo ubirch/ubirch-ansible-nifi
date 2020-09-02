@@ -1,9 +1,10 @@
 ---
 # defaults file for nifi
-nifi_major_version: "{{ nifi_version | splitext | first }}"
+nifi_version: 1.11.4
+nifi_dist_checksum: sha256:5bb68014f818f74b475bcd774ce8c446fc20368ec3062c5ef86e4af9b2ba9aef
 
 # installation locations
-nifi_base_dir: /opt/nifi
+nifi_base_dir: /opt
 nifi_etc_dir: /etc/nifi
 nifi_log_dir: /var/log/nifi
 nifi_pid_dir: /var/run/nifi

@@ -12,8 +12,8 @@ LimitNPROC=10000
 PermissionsStartOnly=true
 ExecStartPre=-/usr/bin/mkdir -p {{ nifi_pid_dir }}
 ExecStartPre=/usr/bin/chown -R {{ nifi_user }} {{ nifi_pid_dir }}
-ExecStart={{ nifi_base_dir }}/nifi-current/bin/nifi.sh start
-ExecStop={{ nifi_base_dir }}/nifi-current/bin/nifi.sh stop
+ExecStart={{ nifi_base_dir }}/nifi/bin/nifi.sh start
+ExecStop={{ nifi_base_dir }}/nifi/bin/nifi.sh stop
 
 [Install]
 WantedBy=multi-user.target

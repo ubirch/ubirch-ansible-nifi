@@ -7,6 +7,18 @@
   user: name="{{ nifi_user }}" group="{{ nifi_user }}" shell="/bin/bash" home="/home/nifi"
   tags: [ user ]
 
+# download and unpack distribution
+- name: Get NiFi distribution (tar.gz)
+  get_url:
+    url: "https://archive.apache.org/dist/nifi/{{ nifi_version }}/nifi-{{ nifi_version }}-bin.tar.gz"
+    checksum: "{{ nifi_dist_checksum }}"
+    dest: /tmp/nifi-{{ nifi_version }}-bin.tar.gz
+- name: Unarchive NiFi distribution
+  unarchive:
+    src: /tmp/nifi-{{ nifi_version }}-bin.tar.gz
+    dest: "{{ nifi_base_dir }}"
+    copy: no
+
 # tasks file for nifi
 - name: Ensure nifi files are world-readable
   file: path="{{ nifi_base_dir }}/nifi-{{ nifi_version }}" state=directory mode="a+rX" recurse=yes
