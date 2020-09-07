@@ -6,6 +6,8 @@ After=network.target
 Type=forking
 User={{ nifi_registry_user }}
 Group={{ nifi_registry_group }}
+ExecStartPre=-/usr/bin/mkdir -p {{ nifi_registry_config_dirs.run }}
+ExecStartPre=/usr/bin/chown -R {{ nifi_registry_user }} {{ nifi_registry_config_dirs.run }}
 ExecStart={{ nifi_registry_config_dirs.home }}/bin/nifi-registry.sh start
 ExecStop={{ nifi_registry_config_dirs.home }}/bin/nifi-registry.sh stop
 

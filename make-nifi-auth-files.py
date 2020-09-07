@@ -45,7 +45,12 @@ root_group_id = str(uuid4())
 flowControllerElement = Element('flowController', { 'encoding-version': '1.4' });
 SubElement(flowControllerElement, 'maxTimerDrivenThreadCount').text = '10'
 SubElement(flowControllerElement, 'maxEventDrivenThreadCount').text = '1'
-SubElement(flowControllerElement, 'registries')
+registriesElement = SubElement(flowControllerElement, 'registries')
+flowRegistryElement = SubElement(registriesElement, 'flowRegistry')
+SubElement(flowRegistryElement, 'id').text = str(uuid4())
+SubElement(flowRegistryElement, 'name').text = 'localhost'
+SubElement(flowRegistryElement, 'url').text = 'http://localhost:18080'
+SubElement(flowRegistryElement, 'description')
 SubElement(flowControllerElement, 'parameterContexts')
 rootGroupElement = SubElement(flowControllerElement, 'rootGroup')
 SubElement(rootGroupElement, 'id').text = root_group_id
@@ -96,4 +101,3 @@ for policy in root_group_policies:
 
 with open('authorizations.xml', 'w', encoding='utf-8') as outfile:
     outfile.write(prettify(authorizations_element))
-
