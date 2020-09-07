@@ -8,11 +8,11 @@ nifi_registry_user: nifireg
 nifi_registry_group: nifireg
 
 nifi_registry_config_dirs:
-  install: /opt/nifi-registry/releases
-  home: /opt/nifi-registry/releases/current
+  install: /opt/nifi-registry
+  home: /opt/nifi-registry
   external_config: /opt/nifi-registry/config_resources
-  run: /opt/nifi-registry/releases/current/run
-  logs: /opt/nifi-registry/releases/current/logs
+  run: /var/run
+  logs: /var/log/nifi-registry
 
 # Specify any NiFi Registry variable in nifi-registry-env.sh here.
 nifi_registry_environment:
