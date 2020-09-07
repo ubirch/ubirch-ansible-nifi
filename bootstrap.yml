@@ -117,6 +117,15 @@
       owner: nifireg
       group: nifireg
       recurse: yes
+  - name: Create NiFi registry bucket
+    uri:
+      url: http://localhost:18080/nifi-registry-api/buckets
+      method: POST
+      body: '{"name": "Versioned Flows"}'
+      body_format: json
+      status_code:
+        - 200
+        - 409
 
   - name: Set limits for NiFi
     copy:
