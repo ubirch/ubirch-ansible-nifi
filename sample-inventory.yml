@@ -28,12 +28,14 @@ all:
       nifi_security_user_oidc_client_id: XXXXXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.apps.googleusercontent.com
       nifi_security_user_oidc_client_secret: XXXXXXXXXXXXXXXXXXXXXXXX
 
-      # NiFi registry backed by GitHub
+      # NiFi registry backed by GitHub (deploy key needs to be installed with write access)
       nifi_registry_github_repository: git@github.com:XXXXXXXXXXX/nifi-flows
-      nifi_registry_github_user: XXXXXXXXXXX
-      nifi_registry_github_token: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      nifi_registry_github_deploy_key: some-local-directory/nifi-flows-deploy-key
 
       # Elasticsearch setup
       logstash_elasticsearch_hosts:
         - https://nifi_dev:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX@XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.eu-west-1.aws.found.io:9243
       logstash_elasticsearch_index: "nifi_dev-%{+YYYY.MM.dd}"
+
+      # Log to DataDog
+      logstash_datadog_log_api_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
