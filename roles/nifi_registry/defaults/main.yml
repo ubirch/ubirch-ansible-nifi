@@ -8,10 +8,10 @@ nifi_registry_user: nifireg
 nifi_registry_group: nifireg
 
 nifi_registry_config_dirs:
-  install: /opt/nifi-registry
+  install: /opt
   home: /opt/nifi-registry
-  external_config: /opt/nifi-registry/config_resources
-  run: /var/run
+  external_config: /opt/nifi-registry
+  run: /var/run/nifi-registry
   logs: /var/log/nifi-registry
 
 # Specify any NiFi Registry variable in nifi-registry-env.sh here.
@@ -46,14 +46,14 @@ identity_providers:
 # Use XPath expressions as keys.
 authorizers:
   /authorizers/userGroupProvider/identifier: file-user-group-provider
-  /authorizers/userGroupProvider/property[@name="Users File"]: "{{ nifi_registry_config_dirs.external_config }}/users.xml"
-  /authorizers/accessPolicyProvider/property[@name="Authorizations File"]: "{{ nifi_registry_config_dirs.external_config }}/authorizations.xml"
+  /authorizers/userGroupProvider/property[@name="Users File"]: "{{ nifi_registry_config_dirs.external_config }}/conf/users.xml"
+  /authorizers/accessPolicyProvider/property[@name="Authorizations File"]: "{{ nifi_registry_config_dirs.external_config }}/conf/authorizations.xml"
 
 # Specify idenfiers of different authorizers
 authorizers_identifiers: {}
 
 providers:
-  /providers/flowPersistenceProvider/property[@name="Flow Storage Directory"]: "{{ nifi_registry_config_dirs.external_config }}/flow_storage"
+  /providers/flowPersistenceProvider/property[@name="Flow Storage Directory"]: "{{ nifi_registry_config_dirs.external_config }}/versioned_flows"
   /providers/extensionBundlePersistenceProvider/property[@name="Extension Bundle Storage Directory"]: "{{ nifi_registry_config_dirs.external_config }}/extension_bundles"
 
 # Specify registry aliases

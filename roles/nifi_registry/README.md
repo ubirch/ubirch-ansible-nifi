@@ -10,34 +10,6 @@ Requires at least Java 8.
 
 See `defaults/main.yml` for all variables and how to specify them. For a deeper dive, the [NiFi Registry System Administrator’s Guide](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html) is a great resource.
 
-The following specifies where to install NiFi Registry, along with a home directory (which will be symbolically linked to the release). Also, a centralized config directory to store files that need not be changed (to avoid copying during upgrades).
-
-```yaml
-nifi_registry_config_dirs:
-  install: /opt/nifi-registry/releases
-  home: /opt/nifi-registry/releases/current
-  external_config: /opt/nifi-registry/config_resources
-  run: {{ nifi_registry_config_dirs.home }}/run
-  logs: {{ nifi_registry_config_dirs.home }}/logs
-```
-
-By default, this is the directory structure that will be created:
-
-```text
-|--opt/
-  |--nifi-registry/
-    |--releases/
-      |--current -> nifi-registry-0.4.0/
-      |--nifi-registry-0.3.0/
-      |--nifi-registry-0.4.0/
-    |--config_resources/
-      |--authorizations.xml
-      |--database/
-      |--extension_bundles/
-      |--flow_storage/
-      |--users.xml
-```
-
 Any key/value pair from a config file can be added to the following dicts. Dict names correspond to file names. The current config options for these files can be found [here](https://github.com/apache/nifi-registry/tree/master/nifi-registry-core/nifi-registry-resources/src/main/resources/conf).
 
 ```yaml

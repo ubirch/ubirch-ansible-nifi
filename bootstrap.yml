@@ -98,6 +98,13 @@
       owner: nifireg
       group: nifireg
       mode: "0400"
+  - name: Create ~nifireg/.ssh/config
+    copy:
+      src: files/ssh-config
+      dest: /home/nifireg/.ssh/config
+      owner: nifireg
+      group: nifireg
+      mode: "0644"
   - name: Clone NiFi flow repository
     git:
       repo: "{{ nifi_registry_github_repository }}"
@@ -109,7 +116,7 @@
   - name: Update NiFi registry providers file
     template:
       src: templates/nifi-registry-providers.xml.j2
-      dest: /opt/nifi-registry/releases/current/conf/providers.xml
+      dest: /opt/nifi-registry/conf/providers.xml
   - name: Change ownership of the flow file repository
     file:
       path: /opt/nifi-registry/versioned_flows
@@ -117,6 +124,10 @@
       owner: nifireg
       group: nifireg
       recurse: yes
+  - name: Remove previous NiFi registry database
+    file:
+      path: /opt/nifi-registry/database/nifi-registry-primary.mv.db
+      state: absent
   - name: Create NiFi registry bucket
     uri:
       url: http://localhost:18080/nifi-registry-api/buckets
