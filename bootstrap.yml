@@ -3,7 +3,6 @@
   hosts: all
   remote_user: root
   vars:
-    no_nifi_rollout:
     certbot_server: https://acme-v02.api.letsencrypt.org/directory
     ssl_truststore: files/empty-truststore.ks
     nifi_security_truststorePasswd: changeit
