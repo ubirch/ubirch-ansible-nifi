@@ -43,3 +43,5 @@
         - openjdk-8-jdk-headless
         - iptables-persistent
         - certbot
+        - mediainfo
+        - libimage-exiftool-perl
