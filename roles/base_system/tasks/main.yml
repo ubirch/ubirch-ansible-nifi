@@ -45,3 +45,4 @@
         - certbot
         - mediainfo
         - libimage-exiftool-perl
+        - redis
