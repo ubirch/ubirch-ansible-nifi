@@ -17,7 +17,8 @@ policies=[
     { 'resource': '/policies', 'action': 'R' },
     { 'resource': '/policies', 'action': 'W' },
     { 'resource': '/controller', 'action': 'R' },
-    { 'resource': '/controller', 'action': 'W' }]
+    { 'resource': '/controller', 'action': 'W' },
+    { 'resource': '/counters', 'action': 'R' }]
 
 root_group_policies=[
     { 'resource': '/data/process-groups/', 'action': 'R' },
